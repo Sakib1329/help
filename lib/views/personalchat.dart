@@ -213,69 +213,7 @@ class Groupchat extends StatelessWidget {
               ),
               controller.isuserblocked == false
                   ? Obx(
-                    () => Container(
-                  margin: EdgeInsets.all(12),
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(
-                      color: AppColor.lightGrey
-                    )
-                  ),
-                  child: Row(
-                    children: [
-                      if (controller.message.value.isEmpty) ...[
-                        GestureDetector(
-                          child: CircleAvatar(
-                            radius: 18,
-                            backgroundColor: AppColor.softRed,
-                            child: Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                          ),
-                          onTap: () {
-                            _pickImage(ImageSource.camera);
-                          },
-                        ),
-                        SizedBox(width: 10),
-                      ],
-                      Expanded(
-                        child: TextField(
-                          controller: controller.textController,
-                          onChanged: (value) =>
-                          controller.message.value = value.trim(),
-                          decoration: InputDecoration(
-                            hintText: 'Message...',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                      if (controller.message.value.isEmpty) ...[
-                        Image.asset(ImageAssets.microphone, width: 30, height: 30,color: AppColor.softRed,),
-                        SizedBox(width: 10),
-                        GestureDetector(
-                          onTap: () {
-                            _pickVideoOrImageFromGallery();
-                          },
-                          child: Image.asset(ImageAssets.gallery, width: 30, height: 30,color: AppColor.softRed),
-                        ),
-                      ] else ...[
-                        GestureDetector(
-                          onTap: () {},
-                          child: SvgPicture.asset(
-                            ImageAssets.send,
-                            height: 24,
-                            width: 24,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
+                    () => _buildInputBar(context),
               )
                   : Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -290,4 +228,89 @@ class Groupchat extends StatelessWidget {
       ),
     );
   }
+  Widget _buildInputBar(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(12),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(
+          color: AppColor.lightGrey
+        )
+      ),
+      child: Row(
+        children: [
+          Obx(
+                () =>
+            controller.message.value.isEmpty
+                ? GestureDetector(
+              child: CircleAvatar(
+                radius: 18,
+                backgroundColor: AppColor.softRed,
+                child: const Icon(
+                  Icons.camera_alt,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
+              onTap: () {
+                _pickImage(ImageSource.camera);
+              },
+            )
+                : const SizedBox.shrink(),
+          ),
+          SizedBox(width: controller.message.value.isEmpty ? 10 : 0),
+          Expanded(
+            child: TextField(
+              controller: controller.textController,
+              onChanged: (value) => controller.message.value = value.trim(),
+              decoration: const InputDecoration(
+                hintText: 'Message...',
+                hintStyle: TextStyle(color: Colors.grey),
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+          Obx(
+                () =>
+            controller.message.value.isEmpty
+                ? Row(
+              children: [
+                Image.asset(
+                  ImageAssets.microphone,
+                  width: 30,
+                  height: 30,
+                  color: AppColor.softRed,
+                ),
+                SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () {
+                    _pickVideoOrImageFromGallery();
+                  },
+                  child: Image.asset(
+                    ImageAssets.gallery,
+                    width: 30,
+                    height: 30,
+                    color: AppColor.softRed,
+                  ),
+                ),
+              ],
+            )
+                : GestureDetector(
+              onTap: () {},
+              child: SvgPicture.asset(
+                ImageAssets.send,
+                height: 24,
+                width: 24,
+                color: AppColor.softRed,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 }
